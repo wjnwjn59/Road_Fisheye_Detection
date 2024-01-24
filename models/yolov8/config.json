@@ -1,0 +1,7 @@
+{
+    "epochs": 50,
+    "batch_size": -1,
+    "img_size": 640,
+    "project_name": "weights",
+    "name": "yolov8s_det"
+}
