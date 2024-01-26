@@ -2,27 +2,35 @@ import os
 import yaml
 import json
 
+from pathlib import Path
 from ultralytics import YOLO
 
 class YOLOv8:
-    def __init__(self, model_name: str) -> None:
-        self.model_name = model_name
-        self.model = YOLO(model_name)
-        self.cls_to_id = {
-            'Bus': 0,
-            'Bike': 1,
-            'Car': 2,
-            'Pedestrian': 3,
-            'Truck': 4
+    def __init__(self, model_name: str, dataset_root_dir: str) -> None:
+        self.model_name = self.get_model_path(model_name)
+        self.model = YOLO(self.model_name)
+        self.id_to_cls = {
+            0: 'Bus',
+            1: 'Bike',
+            2: 'Car',
+            3: 'Pedestrian',
+            4: 'Truck'
         }
         self.config = self.load_config()
-        self.data_root_dir = 'datasets/Fisheye8k'
+        self.dataset_root_dir = dataset_root_dir
         self.yolo_yaml_path = os.path.join(
-            self.data_root_dir, 'fisheye8k_data.yaml'
+            self.dataset_root_dir, 'fisheye8k_data.yaml'
         )
 
+    def get_model_path(self, model_name):
+        current_dir = Path(__file__).parent
+        model_path = current_dir / 'weights' / f'{model_name}.pt'
+
+        return model_path
+
     def load_config(self) -> dict:
-        config_file_path = 'config.json'
+        current_dir = Path(__file__).parent
+        config_file_path = current_dir / 'config.json'
 
         with open(config_file_path, 'r') as file:
             config = json.load(file)
@@ -31,24 +39,24 @@ class YOLOv8:
     
     def create_yaml_file(self) -> None:
         data_yaml = {
-            'path': self.dataset_root_dir,
-            'train': 'train/images/camera',
-            'val': 'test/images/camera',
-            'nc': len(self.cls_to_id.keys()),
-            'names': self.cls_to_id 
+            'path': os.path.abspath(self.dataset_root_dir),
+            'train': 'train/images',
+            'val': 'test/images',
+            'nc': len(self.id_to_cls.keys()),
+            'names': self.id_to_cls 
         }
 
         with open(self.yolo_yaml_path, 'w') as f:
             yaml.dump(data_yaml, f, default_flow_style=False)
 
     def check_yaml_file(self) -> None:
-        if not os.path.exists(self.yolo_yaml_path):
-            self.create_yaml_file()
+        self.create_yaml_file()
 
     def train(self) -> None:
         self.check_yaml_file()
 
         self.model.train(
+            data=self.yolo_yaml_path,
             **self.config
         )
 
@@ -57,7 +65,14 @@ class YOLOv8:
 
         return results
 
-    def eval(self) -> dict:
-        results = self.model.eval(save=False)
+    def eval(self, is_save: bool=False) -> dict:
+        project_name = os.path.join(
+            self.config['project'],
+            self.config['name']
+        )
+        results = self.model.val(
+            name='evaluation',
+            save_json=is_save
+        )
 
         return results

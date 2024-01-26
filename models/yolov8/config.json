@@ -1,7 +1,8 @@
 {
-    "epochs": 50,
-    "batch_size": -1,
-    "img_size": 640,
-    "project_name": "weights",
-    "name": "yolov8s_det"
+    "epochs": 250,
+    "batch": -1,
+    "imgsz": 640,
+    "optimizer": "Adam",
+    "project": "models/yolov8/weights",
+    "name": "yolov8l_fisheye8k"
 }

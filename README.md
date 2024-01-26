@@ -6,9 +6,10 @@ Source code for AI CITY 2024 Challenge Track 4: Road Object Detection in Fish-Ey
 Download Fisheye8K dataset at [here](https://scidm.nchc.org.tw/en/dataset/fisheye8k).
 
 ## Methods
-
+- [x] Survey paper: [here](https://arxiv.org/pdf/2205.13281.pdf)
 - [x] YOLOv8
 - [] Co-DETR
+- [] [FisheyeYOLO](https://ml4ad.github.io/files/papers2020/FisheyeYOLO:%20Object%20Detection%20on%20Fisheye%20Cameras%20for%20Autonomous%20Driving.pdf)
 
 
 ## Benchmarks
