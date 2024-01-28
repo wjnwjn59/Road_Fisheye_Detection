@@ -1,0 +1,10 @@
+path: ./Fisheye8K/
+train: train/images
+val: test/images
+
+names:
+- 0: 'Bus'
+- 1: 'Bike'
+- 2: 'Car'
+- 3: 'Pedestrian'
+- 4: 'Truck'
